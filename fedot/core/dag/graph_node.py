@@ -30,24 +30,6 @@ class GraphNode:
         self._nodes_from = UniqueList(nodes_from or ())
         self.uid = str(uuid4())
 
-    def __str__(self):
-        """Returns graph node description
-
-        Returns:
-            text graph node representation
-        """
-
-        return str(self.content['name'])
-
-    def __repr__(self):
-        """Does the same as :meth:`__str__`
-
-        Returns:
-            text graph node representation
-        """
-
-        return self.__str__()
-
     @property
     def nodes_from(self) -> List['GraphNode']:
         """Gets all parent nodes of this graph node
@@ -86,25 +68,40 @@ class GraphNode:
         """
         return node_depth(self) - 1
 
+    def __str__(self) -> str:
+        """Returns short node type description
+
+        Returns:
+            str: text graph node representation
+        """
+
+        return str(self.content['name'])
+
+    def __repr__(self) -> str:
+        """Returns full node description
+
+        Returns:
+            str: text graph node representation
+        """
+
+        node_operation = self.content['name']
+        params = self.content.get('params')
+        if isinstance(node_operation, str):
+            # If there is a string: name of operation (as in json repository)
+            node_label = str(node_operation)
+            if params and params != DEFAULT_PARAMS_STUB:
+                node_label = f'n_{node_label}_{params}'
+        else:
+            # If instance of Operation is placed in 'name'
+            node_label = node_operation.description(params)
+        return node_label
+
 
 def _descriptive_id_recursive(current_node, visited_nodes=None) -> str:
-    """Method returns verbal description of the content in the node
-    and its parameters
-    """
-
     if visited_nodes is None:
         visited_nodes = []
 
-    node_operation = current_node.content['name']
-    params = current_node.content.get('params')
-    if isinstance(node_operation, str):
-        # If there is a string: name of operation (as in json repository)
-        node_label = str(node_operation)
-        if params and params != DEFAULT_PARAMS_STUB:
-            node_label = f'n_{node_label}_{params}'
-    else:
-        # If instance of Operation is placed in 'name'
-        node_label = node_operation.description(params)
+    node_label = repr(current_node)
 
     full_path_items = []
     if current_node in visited_nodes:
@@ -113,7 +110,7 @@ def _descriptive_id_recursive(current_node, visited_nodes=None) -> str:
     if current_node.nodes_from:
         previous_items = []
         for parent_node in current_node.nodes_from:
-            previous_items.append(f'{_descriptive_id_recursive(copy(parent_node), copy(visited_nodes))};')
+            previous_items.append(f'{_descriptive_id_recursive(parent_node, copy(visited_nodes))};')
         previous_items.sort()
         previous_items_str = ';'.join(previous_items)
 
