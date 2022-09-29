@@ -3,9 +3,10 @@ from inspect import isclass, isfunction, ismethod, signature
 from json import JSONDecoder, JSONEncoder
 from typing import Any, Callable, Dict, Type, TypeVar, Union
 
+from fedot.core.dag.graph_node import DAGNode
 from fedot.core.optimisers.fitness.fitness import Fitness
-from fedot.core.pipelines.node import NodeMetadata
 from fedot.core.optimisers.objective.objective import Objective
+from fedot.core.pipelines.node import NodeMetadata
 
 MODULE_X_NAME_DELIMITER = '/'
 INSTANCE_OR_CALLABLE = TypeVar('INSTANCE_OR_CALLABLE', object, Callable)
@@ -29,7 +30,6 @@ class Serializer(JSONEncoder, JSONDecoder):
             from uuid import UUID
 
             from fedot.core.dag.graph import Graph
-            from fedot.core.dag.graph_node import GraphNode
             from fedot.core.operations.operation import Operation
             from fedot.core.optimisers.gp_comp.individual import Individual
             from fedot.core.optimisers.graph import OptGraph, OptNode
@@ -61,7 +61,7 @@ class Serializer(JSONEncoder, JSONDecoder):
                 Fitness: basic_serialization,
                 Individual: basic_serialization,
                 NodeMetadata: basic_serialization,
-                GraphNode: {_to_json: graph_node_to_json, _from_json: any_from_json},
+                DAGNode: {_to_json: graph_node_to_json, _from_json: any_from_json},
                 Graph: {_to_json: any_to_json, _from_json: graph_from_json},
                 Operation: {_to_json: operation_to_json, _from_json: any_from_json},
                 OptHistory: {_to_json: opt_history_to_json, _from_json: opt_history_from_json},
@@ -70,7 +70,7 @@ class Serializer(JSONEncoder, JSONDecoder):
                 ComparableEnum: {_to_json: enum_to_json, _from_json: enum_from_json},
             }
             Serializer.CODERS_BY_TYPE.update({
-                OptNode: Serializer.CODERS_BY_TYPE[GraphNode],
+                OptNode: Serializer.CODERS_BY_TYPE[DAGNode],
                 OptGraph: Serializer.CODERS_BY_TYPE[Graph],
             })
 
