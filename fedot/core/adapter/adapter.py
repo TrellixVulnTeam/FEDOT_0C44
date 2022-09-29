@@ -3,9 +3,9 @@ from copy import deepcopy
 from typing import TypeVar, Generic, Type, Optional, Dict, Any, Callable, Tuple, Sequence, Union
 
 from fedot.core.log import default_log
-from fedot.core.optimisers.gp_comp.individual import Individual
 from fedot.core.optimisers.gp_comp.operators.operator import PopulationT
 from fedot.core.optimisers.graph import OptGraph, OptNode
+from fedot.core.optimisers.opt_history import Individual
 from fedot.core.adapter.adapt_registry import AdaptRegistry
 
 DomainStructureType = TypeVar('DomainStructureType')
