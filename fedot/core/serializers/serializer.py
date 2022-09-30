@@ -1,7 +1,7 @@
 from importlib import import_module
 from inspect import isclass, isfunction, ismethod, signature
 from json import JSONDecoder, JSONEncoder
-from typing import Any, Callable, Dict, Type, TypeVar, Union
+from typing import Any, Callable, Dict, Type, TypeVar, Union, Mapping
 
 from fedot.core.dag.graph_node import DAGNode
 from fedot.core.optimisers.fitness.fitness import Fitness
@@ -19,6 +19,12 @@ class Serializer(JSONEncoder, JSONDecoder):
     _from_json = 'from_json'
 
     CODERS_BY_TYPE = {}
+
+    # Mapping between class paths for backward compatibility for renamed/moved classes
+    # NB: note that MODULE_X_NAME_DELIMETER is used
+    _class_compatibility_mapping: Mapping[str, str] = {
+        f'fedot.core.dag.graph_node/GraphNode': 'fedot.core.dag.graph_node/DAGNode'
+    }
 
     def __init__(self, *args, **kwargs):
         for base_class, coder_name in [(JSONEncoder, 'default'), (JSONDecoder, 'object_hook')]:
@@ -139,6 +145,8 @@ class Serializer(JSONEncoder, JSONDecoder):
 
         :return: class, function or method type
         """
+        class_path = Serializer._class_compatibility_mapping.get(class_path, class_path)
+
         module_name, class_name = class_path.split(MODULE_X_NAME_DELIMITER)
         obj_cls = import_module(module_name)
         for sub in class_name.split('.'):
