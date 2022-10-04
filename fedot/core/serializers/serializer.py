@@ -23,7 +23,10 @@ class Serializer(JSONEncoder, JSONDecoder):
     # Mapping between class paths for backward compatibility for renamed/moved classes
     # NB: note that MODULE_X_NAME_DELIMETER is used
     _class_compatibility_mapping: Mapping[str, str] = {
-        f'fedot.core.dag.graph_node/GraphNode': 'fedot.core.dag.graph_node/DAGNode'
+        f'fedot.core.dag.graph_node/GraphNode': 'fedot.core.dag.linked_graph_node/LinkedGraphNode',
+        f'fedot.core.dag.graph_operator/GraphOperator': 'fedot.core.dag.linked_graph/LinkedGraph',
+        f'fedot.core.dag.graph_operator/GraphOperator._empty_postprocess':
+            'fedot.core.dag.linked_graph/LinkedGraph._empty_postprocess',
     }
 
     def __init__(self, *args, **kwargs):
