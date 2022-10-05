@@ -1,6 +1,8 @@
 Basics
 ======
 
+For commonly used tasks
+
 .. toctree::
    :maxdepth: 1
 
