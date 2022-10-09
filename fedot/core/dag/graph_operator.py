@@ -149,14 +149,8 @@ class GraphOperator(Graph, Copyable):
     def connect_nodes(self, parent: GraphNode, child: GraphNode):
         if child in self.node_children(parent):
             return
-        # if not already connected
-        if child.nodes_from:
-            child.nodes_from.append(parent)
-        else:
-            # add parent to initial node
-            new_child = GraphNode(nodes_from=[], content=child.content)
-            new_child.nodes_from.append(parent)
-            self.update_node(child, new_child)
+        child.nodes_from.append(parent)
+
 
     def _clean_up_leftovers(self, node: GraphNode):
         """Removes nodes and edges that do not affect the result of the pipeline.
